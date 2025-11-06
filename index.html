@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Baker - Free Image to PDF Converter | 무료 이미지 PDF 변환</title>
+    <meta name="description" content="Convert images to PDF for free. No registration required. Support JPG, PNG, GIF, WEBP. Mobile-friendly design. 무료 이미지 PDF 변환기 - 로그인 없이 간편하게 사용하세요.">
+    <meta name="keywords" content="PDF converter, image to PDF, free PDF maker, JPG to PDF, PNG to PDF, online PDF tools, 이미지 PDF 변환, PDF 만들기">
+    <meta name="author" content="PDF Baker">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pdf-baker.netlify.app/">
+    <meta property="og:title" content="PDF Baker - Free Image to PDF Converter">
+    <meta property="og:description" content="Convert images to PDF for free. No registration required. Support multiple formats. Mobile-friendly design.">
+    <meta property="og:image" content="https://pdf-baker.netlify.app/og-image.png">
+    <meta property="og:site_name" content="PDF Baker">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://pdf-baker.netlify.app/">
+    <meta property="twitter:title" content="PDF Baker - Free Image to PDF Converter">
+    <meta property="twitter:description" content="Convert images to PDF for free. No registration required. Support multiple formats.">
+    <meta property="twitter:image" content="https://pdf-baker.netlify.app/og-image.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#007aff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="PDF Baker">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://pdf-baker.netlify.app/">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- jsPDF Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PDF Baker",
+        "description": "Free online image to PDF converter. Convert JPG, PNG, GIF, WEBP to PDF without registration.",
+        "url": "https://pdf-baker.netlify.app",
+        "applicationCategory": "UtilityApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        },
+        "featureList": [
+            "Free image to PDF conversion",
+            "No registration required",
+            "Multiple image format support",
+            "Mobile-friendly interface",
+            "Multi-language support"
+        ]
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="language-selector">
+            <select id="languageSelect">
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+                <option value="zh">中文</option>
+                <option value="ko">한국어</option>
+            </select>
+        </div>
+        
+        <header class="header">
+            <h1 id="appTitle">PDF Baker</h1>
+            <p id="appSubtitle">Images to PDF. Simply.</p>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-area" id="fileDropArea">
+                    <div class="upload-icon">▦▦▦</div>
+                    <h2 id="dropTitle">Drag images here</h2>
+                    <p id="dropSubtitle">or select files</p>
+                    <input type="file" id="fileInput" accept="image/*" multiple capture="environment">
+                </div>
+
+                <div class="file-list" id="fileList" style="display: none;">
+                    <h3 id="selectedImagesTitle">Selected Images</h3>
+                    <div id="imagePreview"></div>
+                </div>
+            </div>
+
+            <div class="options-section" id="optionsSection" style="display: none;">
+                <h3 id="settingsTitle">Settings</h3>
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label for="pageSize" id="pageSizeLabel">Page Size</label>
+                        <select id="pageSize">
+                            <option value="a4" id="pageA4">A4</option>
+                            <option value="a3" id="pageA3">A3</option>
+                            <option value="letter" id="pageLetter">Letter</option>
+                            <option value="custom" id="pageCustom">Auto Fit</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="orientation" id="orientationLabel">Orientation</label>
+                        <select id="orientation">
+                            <option value="portrait" id="orientPortrait">Portrait</option>
+                            <option value="landscape" id="orientLandscape">Landscape</option>
+                        </select>
+                    </div>
+                    <div class="option-group">
+                        <label for="quality" id="qualityLabel">Quality</label>
+                        <select id="quality">
+                            <option value="1.0" id="qualityHigh">High</option>
+                            <option value="0.8" selected id="qualityGood">Good</option>
+                            <option value="0.6" id="qualityMedium">Medium</option>
+                            <option value="0.4" id="qualityLow">Low</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-section" id="actionSection" style="display: none;">
+                <div class="progress-container" id="progressContainer" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+                <button class="convert-button" id="convertButton">
+                    <span class="button-text" id="createPDFText">Create PDF</span>
+                    <span class="loading-spinner" style="display: none;">⏳</span>
+                </button>
+                <button class="clear-button" id="clearButton">
+                    <span id="restartText">Clear All</span>
+                </button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="about.html" id="aboutLink">About</a>
+                <span class="footer-divider">|</span>
+                <a href="guide.html" id="guideLink">User Guide</a>
+                <span class="footer-divider">|</span>
+                <a href="privacy.html" id="privacyLink">Privacy Policy</a>
+            </div>
+            <p class="footer-copyright">© 2025. azzaman All Rights Reserved.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

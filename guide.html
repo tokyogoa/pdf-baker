@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - PDF Baker</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-xxl) var(--spacing-lg);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: var(--spacing-xl);
+            color: var(--pompidou-red);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 2px solid var(--pompidou-red);
+            transition: all 0.2s ease;
+        }
+        
+        .back-link:hover {
+            background: var(--pompidou-red);
+            color: var(--pompidou-white);
+        }
+        
+        .content-section {
+            background: var(--pompidou-white);
+            border: 2px solid var(--pompidou-black);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+        }
+        
+        .content-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: var(--spacing-lg);
+            right: var(--spacing-lg);
+            height: 4px;
+            background: var(--pompidou-yellow);
+        }
+        
+        .content-section h2 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--pompidou-black);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .step-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: step-counter;
+        }
+        
+        .step-list li {
+            font-family: var(--font-primary);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--pompidou-black);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+            border-left: 4px solid var(--pompidou-yellow);
+            background: #fffef8;
+            counter-increment: step-counter;
+            position: relative;
+        }
+        
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -20px;
+            top: var(--spacing-md);
+            width: 32px;
+            height: 32px;
+            background: var(--pompidou-yellow);
+            color: var(--pompidou-black);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .tip-box {
+            background: rgba(0, 102, 255, 0.1);
+            border: 2px solid var(--pompidou-blue);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            position: relative;
+        }
+        
+        .tip-box::before {
+            content: 'TIP';
+            position: absolute;
+            top: -12px;
+            left: var(--spacing-md);
+            background: var(--pompidou-blue);
+            color: var(--pompidou-white);
+            padding: 4px var(--spacing-sm);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .tip-box p {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--pompidou-black);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="language-selector">
+            <select id="languageSelect">
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+                <option value="zh">中文</option>
+                <option value="ko">한국어</option>
+            </select>
+        </div>
+        
+        <div class="page-content">
+            <a href="index.html" class="back-link" id="backLink">← Back to PDF Baker</a>
+            
+            <div class="content-section">
+                <h1 id="pageTitle">User Guide</h1>
+                <p id="description">
+                    Learn how to use PDF Baker to convert your images to PDF files quickly and easily.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="stepsTitle">How to Convert Images to PDF</h2>
+                <ol class="step-list">
+                    <li id="step1">
+                        <strong>Select Images:</strong> Click the upload area or drag and drop your image files. 
+                        Supported formats: JPG, PNG, GIF, WEBP.
+                    </li>
+                    <li id="step2">
+                        <strong>Review Selection:</strong> Preview your selected images. 
+                        You can remove individual images by clicking the red remove button.
+                    </li>
+                    <li id="step3">
+                        <strong>Configure Settings:</strong> Choose your preferred page size (A4, A3, Letter) 
+                        and orientation (Portrait or Landscape).
+                    </li>
+                    <li id="step4">
+                        <strong>Create PDF:</strong> Click the "Create PDF" button. 
+                        The progress bar will show conversion status.
+                    </li>
+                    <li id="step5">
+                        <strong>Download:</strong> Your PDF will automatically download when ready. 
+                        The file will be named with a timestamp for easy identification.
+                    </li>
+                </ol>
+                
+                <div class="tip-box">
+                    <p id="tip1">
+                        TIP: You can select multiple images at once for batch conversion. 
+                        The order of images in the PDF will match the order they appear in the preview.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="troubleshootTitle">Troubleshooting</h2>
+                <div class="tip-box">
+                    <p id="troubleshoot1">
+                        <strong>Large Files:</strong> Very large images may take longer to process. 
+                        Consider resizing images before conversion for faster results.
+                    </p>
+                </div>
+                <div class="tip-box">
+                    <p id="troubleshoot2">
+                        <strong>Browser Issues:</strong> If conversion fails, try refreshing the page 
+                        and ensure you're using a modern browser (Chrome, Firefox, Safari, Edge).
+                    </p>
+                </div>
+                <div class="tip-box">
+                    <p id="troubleshoot3">
+                        <strong>Mobile Usage:</strong> On mobile devices, you can access your camera 
+                        directly from the file selector to convert photos instantly.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="supportedTitle">Supported Formats</h2>
+                <p id="supportedDesc">
+                    <strong>Input:</strong> JPG, JPEG, PNG, GIF, WEBP<br>
+                    <strong>Output:</strong> PDF (Portable Document Format)<br>
+                    <strong>Page Sizes:</strong> A4, A3, Letter, Auto-fit<br>
+                    <strong>Orientations:</strong> Portrait, Landscape
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="guide.js"></script>
+</body>
+</html>

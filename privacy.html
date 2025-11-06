@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - PDF Baker</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .page-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--spacing-xxl) var(--spacing-lg);
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-bottom: var(--spacing-xl);
+            color: var(--pompidou-red);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 2px solid var(--pompidou-red);
+            transition: all 0.2s ease;
+        }
+        
+        .back-link:hover {
+            background: var(--pompidou-red);
+            color: var(--pompidou-white);
+        }
+        
+        .content-section {
+            background: var(--pompidou-white);
+            border: 2px solid var(--pompidou-black);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-lg);
+            position: relative;
+        }
+        
+        .content-section::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: var(--spacing-lg);
+            right: var(--spacing-lg);
+            height: 4px;
+            background: var(--pompidou-green);
+        }
+        
+        .content-section h2 {
+            font-family: var(--font-display);
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--pompidou-black);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .content-section h3 {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--pompidou-black);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+        }
+        
+        .content-section p {
+            font-family: var(--font-primary);
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--pompidou-black);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .highlight-box {
+            background: rgba(0, 255, 0, 0.1);
+            border: 2px solid var(--pompidou-green);
+            padding: var(--spacing-md);
+            margin: var(--spacing-md) 0;
+            position: relative;
+        }
+        
+        .highlight-box::before {
+            content: 'IMPORTANT';
+            position: absolute;
+            top: -12px;
+            left: var(--spacing-md);
+            background: var(--pompidou-green);
+            color: var(--pompidou-black);
+            padding: 4px var(--spacing-sm);
+            font-family: var(--font-mono);
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .highlight-box p {
+            margin: 0;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--pompidou-black);
+        }
+        
+        .date-updated {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            color: var(--pompidou-gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--spacing-lg);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="language-selector">
+            <select id="languageSelect">
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+                <option value="zh">中文</option>
+                <option value="ko">한국어</option>
+            </select>
+        </div>
+        
+        <div class="page-content">
+            <a href="index.html" class="back-link" id="backLink">← Back to PDF Baker</a>
+            
+            <div class="content-section">
+                <h1 id="pageTitle">Privacy Policy</h1>
+                <p class="date-updated" id="lastUpdated">Last Updated: October 28, 2025</p>
+                <p id="description">
+                    PDF Baker is committed to protecting your privacy. This policy explains our approach to data handling and privacy protection.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <div class="highlight-box">
+                    <p id="mainPromise">
+                        YOUR FILES NEVER LEAVE YOUR DEVICE. ALL PROCESSING IS DONE LOCALLY IN YOUR BROWSER.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="dataCollectionTitle">Data Collection</h2>
+                <h3 id="noDataTitle">No Personal Data Collection</h3>
+                <p id="noDataDesc">
+                    PDF Baker does not collect, store, or transmit any personal information. 
+                    We do not require registration, email addresses, or any form of identification.
+                </p>
+                
+                <h3 id="noFileTitle">No File Storage</h3>
+                <p id="noFileDesc">
+                    Your images and generated PDF files are processed entirely within your browser. 
+                    No files are uploaded to our servers or stored anywhere outside your device.
+                </p>
+                
+                <h3 id="noTrackingTitle">No Tracking</h3>
+                <p id="noTrackingDesc">
+                    We do not use cookies, analytics, tracking pixels, or any other monitoring technologies. 
+                    Your usage patterns and behavior are completely private.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="howWorksTitle">How It Works</h2>
+                <p id="localProcessing">
+                    PDF Baker uses client-side JavaScript and the jsPDF library to convert images to PDF format. 
+                    All processing happens locally in your browser using your device's computing power.
+                </p>
+                <p id="browserSecurity">
+                    Your browser's built-in security features ensure that PDF Baker cannot access 
+                    files outside of those you explicitly select for conversion.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="thirdPartyTitle">Third-Party Services</h2>
+                <p id="cdnUsage">
+                    We use Content Delivery Networks (CDNs) to load the jsPDF library. 
+                    These services may log basic connection information (IP address, user agent) 
+                    but this data is not accessible to or controlled by PDF Baker.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="dataSecurityTitle">Data Security</h2>
+                <p id="securityMeasures">
+                    Since no data leaves your device, the security of your files depends on your device's security. 
+                    We recommend keeping your browser updated and using devices with appropriate security measures.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="changesTitle">Changes to This Policy</h2>
+                <p id="changesDesc">
+                    Any changes to this privacy policy will be posted on this page. 
+                    Given our zero-data-collection approach, policy changes are unlikely 
+                    but will be communicated if they occur.
+                </p>
+            </div>
+            
+            <div class="content-section">
+                <h2 id="contactTitle">Contact</h2>
+                <p id="contactDesc">
+                    If you have questions about this privacy policy, 
+                    you can find our contact information on the About page.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="privacy.js"></script>
+</body>
+</html>
