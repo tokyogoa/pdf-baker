@@ -9,7 +9,6 @@ const languages = {
         title: 'PDF Baker',
         subtitle: 'Images to PDF. Simply.',
         dropTitle: 'Drag images here',
-        dropSubtitle: 'or select files',
         selectFiles: 'Select Files',
         selectedImages: 'Selected Images',
         settings: 'Settings',
@@ -51,7 +50,6 @@ const languages = {
         title: 'PDF Baker',
         subtitle: '画像をPDFに。シンプルに。',
         dropTitle: '画像をここにドロップしてください',
-        dropSubtitle: 'またはファイルを選択',
         selectFiles: 'ファイル選択',
         selectedImages: '選択された画像',
         settings: '設定',
@@ -93,7 +91,6 @@ const languages = {
         title: 'PDF Baker',
         subtitle: '图片转PDF，简单易用。',
         dropTitle: '将图片拖到这里',
-        dropSubtitle: '或选择文件',
         selectFiles: '选择文件',
         selectedImages: '已选择的图片',
         settings: '设置',
@@ -135,7 +132,6 @@ const languages = {
         title: 'PDF Baker',
         subtitle: '이미지를 PDF로. 간단하게.',
         dropTitle: '이미지를 여기에 끌어다 놓으세요',
-        dropSubtitle: '또는 파일을 선택하세요',
         selectFiles: '파일 선택',
         selectedImages: '선택된 이미지',
         settings: '설정',
@@ -184,6 +180,7 @@ const optionsSection = document.getElementById('optionsSection');
 const actionSection = document.getElementById('actionSection');
 const convertButton = document.getElementById('convertButton');
 const clearButton = document.getElementById('clearButton');
+const selectFilesButton = document.getElementById('selectFilesButton');
 const pageSize = document.getElementById('pageSize');
 const orientation = document.getElementById('orientation');
 const quality = document.getElementById('quality');
@@ -233,6 +230,7 @@ function setupEventListeners() {
     fileDropArea.addEventListener('dragleave', handleDragLeave);
     fileDropArea.addEventListener('drop', handleDrop);
     fileDropArea.addEventListener('click', () => fileInput.click());
+    selectFilesButton.addEventListener('click', (e) => { e.stopPropagation(); fileInput.click(); });
     
     // Button events
     convertButton.addEventListener('click', convertToPDF);
@@ -256,7 +254,7 @@ function updateLanguage() {
         'appTitle': lang.title,
         'appSubtitle': lang.subtitle,
         'dropTitle': lang.dropTitle,
-        'dropSubtitle': lang.dropSubtitle,
+        'selectFilesButton': lang.selectFiles,
         'selectedImagesTitle': lang.selectedImages,
         'settingsTitle': lang.settings,
         'pageSizeLabel': lang.pageSize,
@@ -375,7 +373,7 @@ function fileToDataUrl(file) {
 
 function createImagePreviewItem(file, dataUrl, index) {
     const item = document.createElement('div');
-    item.className = 'image-item';
+    item.className = 'file-item';
     
     item.innerHTML = `
         <img src="${dataUrl}" alt="${file.name}">
@@ -533,7 +531,7 @@ function calculateImageDimensions(img, pdf, pageSizeValue, orientationValue) {
         };
     } else {
         // Fit to page with margin
-        const margin = 20;
+        const margin = 10; // 여백을 20mm에서 10mm로 줄여 이미지를 더 크게 표시합니다.
         const maxWidth = pageWidth - (margin * 2);
         const maxHeight = pageHeight - (margin * 2);
         

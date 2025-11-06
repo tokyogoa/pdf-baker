@@ -156,6 +156,12 @@ body {
   transition: opacity 0.3s var(--ease-out);
 }
 
+.upload-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .upload-area:hover {
   border-color: var(--apple-blue);
   transform: translateY(-2px);
@@ -189,11 +195,29 @@ body {
   margin-bottom: var(--spacing-sm);
 }
 
-.upload-area p {
+.select-files-button {
+  display: inline-block;
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--apple-blue);
+  border: 1px solid transparent;
+  border-radius: var(--radius-subtle);
   font-family: var(--font-text);
-  font-size: 17px;
-  color: var(--cool-gray);
-  line-height: 1.41;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+}
+
+.select-files-button:hover {
+  background: var(--apple-blue);
+  color: var(--pure-white);
+  transform: scale(1.05);
+}
+
+.upload-area:hover .select-files-button {
+  border-color: var(--apple-blue);
 }
 
 #fileInput {
@@ -219,7 +243,7 @@ body {
 
 #imagePreview {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-xl);
   max-width: 100%;
@@ -244,7 +268,7 @@ body {
 
 .file-item img {
   width: 100%;
-  height: 120px;
+  height: 80px;
   object-fit: contain; /* cover에서 contain으로 변경하여 이미지 전체가 보이도록 */
   object-position: center;
   border-radius: calc(var(--radius-subtle) - 4px);
@@ -258,11 +282,11 @@ body {
   color: var(--cool-gray);
   text-align: center;
   line-height: 1.3;
-  word-break: break-word;
+  word-break: break-all; /* 단어 단위가 아닌 글자 단위로 줄바꿈하여 공간 활용 */
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* 최대 2줄까지만 표시 */
+  -webkit-line-clamp: 2;
   line-clamp: 2; /* 표준 속성 */
   -webkit-box-orient: vertical;
   max-width: 100%;
