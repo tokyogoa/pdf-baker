@@ -1,4 +1,4 @@
-// shared/language.js
+// /Users/azzaman/Desktop/VS code/pdf-baker/shared/language.js
 
 /**
  * Initializes the language switcher functionality for a page.
@@ -7,7 +7,7 @@
  */
 export function initializeLanguageSwitcher(updateCallback) {
     const supportedLangs = ['en', 'ja', 'zh', 'ko'];
-    let currentLanguage = 'en';
+    let currentLanguage;
 
     const setLanguage = (lang, fromStorage = false) => {
         if (supportedLangs.includes(lang)) {
@@ -16,7 +16,7 @@ export function initializeLanguageSwitcher(updateCallback) {
             if (langSelector) {
                 langSelector.value = currentLanguage;
             }
-            updateCallback(currentLanguage);
+            updateCallback(currentLanguage); // Pass the language
             if (!fromStorage) {
                 localStorage.setItem('pdfBakerLanguage', currentLanguage);
             }
@@ -30,9 +30,11 @@ export function initializeLanguageSwitcher(updateCallback) {
     } else {
         // 2. Detect browser language
         const browserLang = navigator.language.split('-')[0];
-        setLanguage(supportedLangs.includes(browserLang) ? browserLang : 'en');
+        const initialLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+        setLanguage(initialLang);
     }
 
     // Add event listener for the language selector
-    document.getElementById('languageSelect')?.addEventListener('change', (e) => setLanguage(e.target.value));
+    const langSelector = document.getElementById('languageSelect');
+    langSelector?.addEventListener('change', (e) => setLanguage(e.target.value));
 }

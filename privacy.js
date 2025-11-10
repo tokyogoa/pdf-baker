@@ -105,7 +105,8 @@ const privacyLanguages = {
 };
 
 function updateLanguage(language) {
-    const lang = privacyLanguages[language];
+    const currentLanguage = language || document.getElementById('languageSelect').value;
+    const lang = privacyLanguages[currentLanguage];
 
     // Update HTML lang attribute
     document.documentElement.lang = currentLanguage;

@@ -1,7 +1,8 @@
+import { initializeLanguageSwitcher } from './shared/language.js';
+
 // Global variables
 let selectedFiles = [];
 let imageDataUrls = [];
-let currentLanguage = 'en';
 
 // Language data
 const languages = {
@@ -186,41 +187,16 @@ const orientation = document.getElementById('orientation');
 const quality = document.getElementById('quality');
 
 // Initialize event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    // Load saved language or detect browser language with priority
-    const savedLanguage = localStorage.getItem('pdfBakerLanguage');
-    
-    if (savedLanguage && languages[savedLanguage]) {
-        currentLanguage = savedLanguage;
-    } else {
-        // Detect browser language with regional priority
-        const browserLanguage = navigator.language.toLowerCase();
-        const browserRegion = browserLanguage.slice(0, 2);
-        
-        // Priority order: region-specific > en > ja > zh > ko
-        if (browserLanguage.includes('ko') || browserRegion === 'ko') {
-            currentLanguage = 'ko';
-        } else if (browserLanguage.includes('ja') || browserRegion === 'ja') {
-            currentLanguage = 'ja';
-        } else if (browserLanguage.includes('zh') || browserRegion === 'zh' || browserLanguage.includes('cn')) {
-            currentLanguage = 'zh';
-        } else {
-            // Default to English for all other regions
-            currentLanguage = 'en';
-        }
-    }
-    
-    // Set language selector
-    document.getElementById('languageSelect').value = currentLanguage;
-    
-    // Update UI
-    updateLanguage();
+document.addEventListener('DOMContentLoaded', () => {
+    initializeLanguageSwitcher(updateLanguage);
     setupEventListeners();
 });
 
 function setupEventListeners() {
-    // Language change event
-    document.getElementById('languageSelect').addEventListener('change', handleLanguageChange);
+    // Language change is handled by initializeLanguageSwitcher,
+    // which calls updateLanguage. We don't need a separate listener here
+    // if it's already handled in the shared script.
+    // document.getElementById('languageSelect').addEventListener('change', handleLanguageChange);
     
     // File input change event
     fileInput.addEventListener('change', handleFileSelect);
@@ -237,15 +213,11 @@ function setupEventListeners() {
     clearButton.addEventListener('click', clearFiles);
 }
 
-function handleLanguageChange(e) {
-    currentLanguage = e.target.value;
-    localStorage.setItem('pdfBakerLanguage', currentLanguage);
-    updateLanguage();
-}
-
-function updateLanguage() {
+function updateLanguage(language) {
+    const currentLanguage = language || document.getElementById('languageSelect').value;
     const lang = languages[currentLanguage];
-    
+    if (!lang) return; // Exit if language data is not yet available
+
     // Update HTML lang attribute
     document.documentElement.lang = currentLanguage;
     
@@ -333,6 +305,7 @@ function handleFileSelect(e) {
 
 function processFiles(files) {
     // Filter only image files
+    const currentLanguage = document.getElementById('languageSelect').value;
     const imageFiles = files.filter(file => file.type.startsWith('image/'));
     
     if (imageFiles.length === 0) {
@@ -352,7 +325,7 @@ async function loadImagePreviews() {
     for (let i = 0; i < selectedFiles.length; i++) {
         const file = selectedFiles[i];
         try {
-            const dataUrl = await fileToDataUrl(file);
+            const dataUrl = await getCorrectlyOrientedImage(file);
             imageDataUrls.push(dataUrl);
             createImagePreviewItem(file, dataUrl, i);
         } catch (error) {
@@ -362,12 +335,75 @@ async function loadImagePreviews() {
     }
 }
 
-function fileToDataUrl(file) {
+/**
+ * Reads EXIF orientation and returns a correctly oriented image as a data URL.
+ * @param {File} file The image file.
+ * @returns {Promise<string>} A promise that resolves with the data URL of the oriented image.
+ */
+function getCorrectlyOrientedImage(file) {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = e => resolve(e.target.result);
+        const reader = new FileReader(); // For EXIF data
+        reader.onload = (e) => {
+            const view = new DataView(e.target.result);
+            if (view.getUint16(0, false) !== 0xFFD8) {
+                // Not a JPEG, return original data URL
+                return resolve(URL.createObjectURL(file));
+            }
+            let length = view.byteLength, offset = 2, orientation = -1;
+            while (offset < length) {
+                if (view.getUint16(offset + 2, false) <= 8) break;
+                const marker = view.getUint16(offset, false);
+                offset += 2;
+                if (marker === 0xFFE1) {
+                    if (view.getUint32(offset += 2, false) !== 0x45786966) break;
+                    const little = view.getUint16(offset += 6, false) === 0x4949;
+                    offset += view.getUint32(offset + 4, little);
+                    const tags = view.getUint16(offset, little);
+                    offset += 2;
+                    for (let i = 0; i < tags; i++) {
+                        if (view.getUint16(offset + (i * 12), little) === 0x0112) {
+                            orientation = view.getUint16(offset + (i * 12) + 8, little);
+                            break;
+                        }
+                    }
+                    break;
+                } else if ((marker & 0xFF00) !== 0xFF00) break;
+                else offset += view.getUint16(offset, false);
+            }
+
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                let width = img.width, height = img.height;
+
+                if (orientation > 4 && orientation < 9) {
+                    canvas.width = height;
+                    canvas.height = width;
+                } else {
+                    canvas.width = width;
+                    canvas.height = height;
+                }
+
+                switch (orientation) {
+                    case 2: ctx.transform(-1, 0, 0, 1, width, 0); break;
+                    case 3: ctx.transform(-1, 0, 0, -1, width, height); break;
+                    case 4: ctx.transform(1, 0, 0, -1, 0, height); break;
+                    case 5: ctx.transform(0, 1, 1, 0, 0, 0); break;
+                    case 6: ctx.transform(0, 1, -1, 0, height, 0); break;
+                    case 7: ctx.transform(0, -1, -1, 0, height, width); break;
+                    case 8: ctx.transform(0, -1, 1, 0, 0, width); break;
+                    default: ctx.transform(1, 0, 0, 1, 0, 0);
+                }
+
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL('image/jpeg'));
+            };
+            img.onerror = reject;
+            img.src = URL.createObjectURL(file);
+        };
         reader.onerror = reject;
-        reader.readAsDataURL(file);
+        reader.readAsArrayBuffer(file);
     });
 }
 
@@ -416,6 +452,7 @@ function clearFiles() {
 }
 
 async function convertToPDF() {
+    const currentLanguage = document.getElementById('languageSelect').value;
     if (selectedFiles.length === 0) {
         showMessage(languages[currentLanguage].messages.selectForConvert, 'error');
         return;
@@ -431,7 +468,7 @@ async function convertToPDF() {
         // Get options
         const pageSizeValue = pageSize.value;
         const orientationValue = orientation.value;
-        const qualityValue = parseFloat(quality.value);
+        const compression = getCompressionType(quality.value);
         
         // Create PDF
         const pdf = new jsPDF({
@@ -468,7 +505,7 @@ async function convertToPDF() {
                     dimensions.width,
                     dimensions.height,
                     undefined,
-                    'FAST',
+                    compression,
                     0
                 );
                 
@@ -484,14 +521,35 @@ async function convertToPDF() {
         // Generate filename
         const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
         const filename = `images-to-pdf-${timestamp}.pdf`;
-        
+
         // Complete progress
         updateProgress(100);
-        
-        // Save PDF
-        pdf.save(filename);
-        
-        showMessage(`${languages[currentLanguage].messages.pdfCreated} ${filename}`, 'success');
+
+        // --- NEW: Share or Save Logic ---
+        const pdfBlob = pdf.output('blob');
+        const pdfFile = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+        // Check if Web Share API is available and can share files
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
+            try {
+                // Use Web Share API on mobile
+                await navigator.share({
+                    files: [pdfFile],
+                    title: filename,
+                    text: 'PDF created with PDF Baker',
+                });
+                showMessage('PDF shared successfully!', 'success');
+            } catch (shareError) {
+                // Handle share cancellation or error
+                console.log('Share was cancelled or failed', shareError);
+                showMessage('Share cancelled. You can download the file instead.', 'info');
+                pdf.save(filename); // Fallback to download if share is cancelled
+            }
+        } else {
+            // Fallback to direct download on desktop or unsupported browsers
+            pdf.save(filename);
+            showMessage(`${languages[currentLanguage].messages.pdfCreated} ${filename}`, 'success');
+        }
         
     } catch (error) {
         console.error('PDF conversion error:', error);
@@ -502,6 +560,20 @@ async function convertToPDF() {
     }
 }
 
+function getCompressionType(qualityValue) {
+    switch (qualityValue) {
+        case 'high':
+            return 'NONE'; // No compression for highest quality
+        case 'good':
+            return 'FAST'; // Fast is a good balance
+        case 'medium':
+            return 'MEDIUM';
+        case 'low':
+            return 'SLOW'; // Ironically, SLOW gives better compression (smaller size)
+        default:
+            return 'FAST';
+    }
+}
 function loadImage(src) {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -571,7 +643,7 @@ function setLoadingState(loading) {
     }
 }
 
-function showMessage(message, type = 'success') {
+function showMessage(message, type = 'success', duration = 4000) {
     // Remove existing messages
     hideMessage();
     
@@ -587,11 +659,11 @@ function showMessage(message, type = 'success') {
     // Auto hide after 4 seconds
     setTimeout(() => {
         hideMessage();
-    }, 4000);
+    }, duration);
 }
 
 function hideMessage() {
-    const messages = document.querySelectorAll('.success-message, .error-message');
+    const messages = document.querySelectorAll('.success-message, .error-message, .info-message');
     messages.forEach(msg => {
         msg.style.opacity = '0';
         setTimeout(() => msg.remove(), 200);

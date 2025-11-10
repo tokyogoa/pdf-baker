@@ -1,5 +1,6 @@
+import { initializeLanguageSwitcher } from './shared/language.js';
+
 // User Guide page multi-language support
-let currentLanguage = 'en';
 
 // Language data for User Guide page
 const guideLanguages = {
@@ -77,41 +78,10 @@ const guideLanguages = {
     }
 };
 
-// Initialize page
-document.addEventListener('DOMContentLoaded', function() {
-    // Detect browser language
-    const browserLang = navigator.language.split('-')[0];
-    const supportedLangs = ['en', 'ja', 'zh', 'ko'];
-    
-    // Set initial language based on browser or default to English
-    currentLanguage = supportedLangs.includes(browserLang) ? browserLang : 'en';
-    
-    // Update language selector
-    document.getElementById('languageSelect').value = currentLanguage;
-    
-    // Update page content
-    updateLanguage();
-    
-    // Add language selector event listener
-    document.getElementById('languageSelect').addEventListener('change', function(e) {
-        currentLanguage = e.target.value;
-        updateLanguage();
-        // Save language preference
-        localStorage.setItem('pdfBakerLanguage', currentLanguage);
-    });
-    
-    // Load saved language preference
-    const savedLanguage = localStorage.getItem('pdfBakerLanguage');
-    if (savedLanguage && supportedLangs.includes(savedLanguage)) {
-        currentLanguage = savedLanguage;
-        document.getElementById('languageSelect').value = currentLanguage;
-        updateLanguage();
-    }
-});
-
-function updateLanguage() {
+function updateLanguage(language) {
+    const currentLanguage = language || document.getElementById('languageSelect').value;
     const lang = guideLanguages[currentLanguage];
-    
+
     // Update HTML lang attribute
     document.documentElement.lang = currentLanguage;
     
@@ -133,3 +103,7 @@ function updateLanguage() {
     document.getElementById('supportedTitle').textContent = lang.supportedTitle;
     document.getElementById('supportedDesc').innerHTML = lang.supportedDesc;
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializeLanguageSwitcher(updateLanguage);
+});
